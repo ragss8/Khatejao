@@ -1,106 +1,47 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import './Signup.css';
-import Login from './Login';
+import Restaurant from './Restaurant';
+import Delivery from './Delivery';
+import User from './User';
 
 const SignUp = () => {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [address, setAddress] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [activeForm, setActiveForm] = useState('user');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    try {
-      const response = await axios.post('http://localhost:8000/signup', {
-        name: fullName,
-        email,
-        password,
-        phone_number: phoneNumber,
-        address,
-      });
-  
-      console.log('SignUp response:', response.data);
-  
-      setFullName('');
-      setEmail('');
-      setPassword('');
-      setPhoneNumber('');
-      setAddress('');
-      console.log("signup successful");
-      setIsSuccess(true);
-    } catch (error) {
-      console.error('SignUp error:', error);
-    }
+  const toggleForm = (form) => {
+    setActiveForm(form);
   };
-  
-  if (isSuccess) {
-    return (
-      <div className="login-container">
-        <h2 className="login-title">Login</h2>
-        <Login />
-      </div>
-    );
-  }
 
   return (
     <div className="signup-container">
       <h2 className="signup-title">Sign Up</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-          <label htmlFor="fullName">Full Name:</label>
-          <input
-            type="text"
-            id="fullName"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="phoneNumber">Phone Number:</label>
-          <input
-            type="text"
-            id="phoneNumber"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="address">Address:</label>
-          <input
-            type="text"
-            id="address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </div>
-        <button type="submit">SignUp</button>
-        </form>
+      <div className="toggle-buttons">
+        <button
+          className={activeForm === 'user' ? 'toggle-button active' : 'toggle-button'}
+          onClick={() => toggleForm('user')}
+        >
+          User
+        </button>
+        <button
+          className={activeForm === 'restaurant' ? 'toggle-button active' : 'toggle-button'}
+          onClick={() => toggleForm('restaurant')}
+        >
+          Restaurant Owner
+        </button>
+        <button
+          className={activeForm === 'delivery' ? 'toggle-button active' : 'toggle-button'}
+          onClick={() => toggleForm('delivery')}
+        >
+          Delivery Partner
+        </button>
+      </div>
+      {activeForm === 'user' && <User />}
+      {activeForm === 'restaurant' && <Restaurant />}
+      {activeForm === 'delivery' && <Delivery />}
     </div>
   );
-};
+  };  
 
 export default SignUp;
+
 
 

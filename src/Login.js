@@ -1,72 +1,45 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import React, {useState} from "react";
 import './Login.css';
+import UserLogin from "./UserLogin";
+import RestoLogin from "./RestoLogin";
+import DeliveryLogin from "./DeliveryLogin";
 
-const Login = ({ onClose }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const history = useHistory();
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+const Login = () => {
+  const [activeForm,setActiveForm] = useState('userLogin');
+
+  const toggleForm = (form) => {
+    setActiveForm(form);
   };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    try {
-      const response = await axios.post('http://localhost:8000/login', {
-        email,
-        password,
-      });
-      console.log('Login Successful', response.data);
-      setEmail('');
-      setPassword('');
-      history.push('/main');
-    } catch (error) {
-      console.log('Login error', error);
-      setError('Login failed. Please check your credentials.');
-    }
-  };
-  
   return (
-    <div className="login-form-container">
-        <h2 className="login-title">Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={handleEmailChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={handlePasswordChange}
-            required
-          />
-        </div>
-        <button type="submit" className="login-button">
-          Login
+    <div className="Login-container">
+      <h2 className="signup-title">Login</h2>
+      <div className="toggle-buttons">
+        <button
+          className={activeForm === 'userLogin' ? 'toggle-button active' : 'toggle-button'}
+          onClick={() => toggleForm('user')}
+        >
+          User
         </button>
-        {error && <p className="error-message">{error}</p>}
-      </form>
+        <button
+          className={activeForm === 'restaurantLogin' ? 'toggle-button active' : 'toggle-button'}
+          onClick={() => toggleForm('restaurant')}
+        >
+          Restaurant Owner
+        </button>
+        <button
+          className={activeForm === 'deliveryLogin' ? 'toggle-button active' : 'toggle-button'}
+          onClick={() => toggleForm('delivery')}
+        >
+          Delivery Partner
+        </button>
+      </div>
+      {activeForm === 'userLogin' && <UserLogin />}
+      {activeForm === 'restaurantLogin' && <RestoLogin />}
+      {activeForm === 'deliveryLogin' && <DeliveryLogin />}
     </div>
   );
-};
+  }; 
 
 export default Login;
 

@@ -1,33 +1,32 @@
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI,HTTPException
 from pymongo import MongoClient
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel,EmailStr
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta, timezone
 import secrets
 
 app = FastAPI()
 
-mongodb_uri = 'mongodb+srv://raghugaikwad8641:Raghugaikwad8@userinfo.d4n8sns.mongodb.net/?retryWrites=true&w=majority'
-port = 8000
-client = MongoClient(mongodb_uri, port)
-db = client.get_database('Khatejao')
-user_collection = db.users
-
 class SignupForm(BaseModel):
     name: str
+    phoneNumber: str
     email: EmailStr
     password: str
-    phone_number: str
-    address: str
 
 class LoginForm(BaseModel):
     email: EmailStr
-    password: str
+    password: str    
+   
+app = FastAPI()
 
-class UserLogout(BaseModel):
-    session_token: str    
+mongodb_uri = 'mongodb+srv://raghugaikwad8641:Raghugaikwad8@userinfo.d4n8sns.mongodb.net/?retryWrites=true&w=majority'
+port = 8000
+client = MongoClient(mongodb_uri, port)
+db = client['Khatejao']
+user_collection = db['Delivery_management']
 
-@app.post("/signup")
+
+@app.post("/Deliverysignup")
 async def signup(form: SignupForm):
     try:
         user_exists = user_collection.find_one({"email": form.email})
@@ -42,21 +41,19 @@ async def signup(form: SignupForm):
 
         user_data = {
             "name": form.name,
-            "email": form.email,
-            "password": form.password,
-            "phone_number": form.phone_number,
-            "address": form.address,
+            "phoneNumber":form.phoneNumber,
+            "email":form.email,
+            "password":form.password,    
         }
 
         user_collection.insert_one(user_data)
 
-        return {"message": "Signup successful"}
+        return {"message": "Signup successful for delivery"}
 
     except Exception as e:
-        return {"error": str(e)}
+        return {"error": str(e)}    
 
-
-@app.post("/login")
+@app.post("/DeliveryPartnerLogin")
 def login(form: LoginForm):
     existing_user = user_collection.find_one({"email": form.email})
 
@@ -72,24 +69,15 @@ def login(form: LoginForm):
         {"email": form.email},
         {"$set": {"session_token": session_token, "token_expiration": token_expiration}}
     )
-    return {"session_token": session_token, "message": "Login successful"}
+    return {"session_token": session_token, "message": "Login successful"} 
 
-@app.post("/logout")
-async def logout_user(
-    user_logout: UserLogout,
-    response: Response
-):
-    existing_user = user_collection.find_one({"session_token": user_logout.session_token})
-    if not existing_user:
-        raise HTTPException(status_code=404, detail="Session not found")
-    user_collection.update_one({"session_token": user_logout.session_token}, {"$set": {"session_token": "", "token_expiration": ""}})
-    response.status_code = 200
-    return {"message": "Logout successful"}
 
-    
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
-)    
+)  
+
+
+
