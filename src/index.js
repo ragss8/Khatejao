@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import App from '../src/App/App';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Main from './Main';
+import Main from './User/Main';
+import Restaurant from "./Restaurant/Restaurant";
+import Delivery from "./Delivery/Delivery";
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -11,7 +13,9 @@ root.render(
   <Router>
       <Switch>
         <Route exact path="/" component={App} />
-        <Route path="/" component={Main} />
+        <Route path="/main" component={Main} />
+        <Route path="/restaurant" component={Restaurant}/>
+        <Route path="/delivery" component={Delivery}/>
       </Switch>
     </Router>
 );
