@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import "./rest-form.css"
 
@@ -522,3 +523,6 @@ const Restaurant = ({ addRestaurant }) => {
 // };
 
 // export default Main;
+=======
+
+>>>>>>> origin/master
