@@ -8,7 +8,7 @@ import secrets
 app = FastAPI()
 
 mongodb_uri = 'mongodb+srv://raghugaikwad8641:Raghugaikwad8@userinfo.d4n8sns.mongodb.net/?retryWrites=true&w=majority'
-port = 8000
+port = 8003
 client = MongoClient(mongodb_uri, port)
 db = client.get_database('Khatejao')
 user_collection = db.users

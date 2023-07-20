@@ -24,7 +24,7 @@ class PartnerCredentials(BaseModel):
 app = FastAPI()
 
 mongodb_uri = 'mongodb+srv://raghugaikwad8641:Raghugaikwad8@userinfo.d4n8sns.mongodb.net/?retryWrites=true&w=majority'
-port = 8000
+port = 8001
 client = MongoClient(mongodb_uri, port)
 db = client['Khatejao']
 user_collection = db['Delivery_management']

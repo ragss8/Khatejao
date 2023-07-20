@@ -1,15 +1,21 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchRestaurantDetails } from './Action';
-import "./RestaurantCont.css"
+import './RestaurantCont.css';
+import { useHistory } from 'react-router-dom';
 
-const RestaurantContainer = ({ email }) => {
+const RestaurantContainer = ({ restaurant_id }) => {
   const dispatch = useDispatch();
   const { restaurantDetails, loading, error } = useSelector((state) => state.restaurant);
+  const history = useHistory();
 
   useEffect(() => {
-    dispatch(fetchRestaurantDetails(email));
-  }, [dispatch, email]);
+    dispatch(fetchRestaurantDetails(restaurant_id));
+  }, [dispatch, restaurant_id]);
+
+  const handleContainerClick = () => {
+    history.push('/menu');
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -20,14 +26,14 @@ const RestaurantContainer = ({ email }) => {
   }
 
   return (
-    <div>
+    <div className="details-container" onClick={handleContainerClick}>
       {restaurantDetails && (
-        <div className='details-container'>
+        <>
           <h2>{restaurantDetails.restaurantName}</h2>
           <p>Address: {restaurantDetails.address}</p>
           <p>Phone Number: {restaurantDetails.phoneNumber}</p>
           <p>Email: {restaurantDetails.email}</p>
-        </div>
+        </>
       )}
     </div>
   );

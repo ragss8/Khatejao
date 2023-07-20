@@ -1,9 +1,10 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, HTTPException
 from pymongo import MongoClient
 from pydantic import BaseModel, EmailStr
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta, timezone,time
 import secrets
+from bson.objectid import ObjectId
 from gridfs import GridFS
 
 app = FastAPI()
@@ -27,8 +28,15 @@ class RestaurantForm(BaseModel):
     deliveryTime: str
     averageRating: float
 
+class MenuItem(BaseModel):
+    item_name: str
+    description: str
+    price: float
+    ingredients: str
+  
+
 mongodb_uri = 'mongodb+srv://raghugaikwad8641:Raghugaikwad8@userinfo.d4n8sns.mongodb.net/?retryWrites=true&w=majority'
-port = 8000
+port = 8002
 client = MongoClient(mongodb_uri, port)
 db = client['Khatejao']
 user_collection = db['Restaurant_management']
@@ -106,10 +114,13 @@ async def update_restaurant(email: EmailStr, form: RestaurantForm):
     except Exception as e:
         return {"error": str(e)}
 
-@app.get("/restaurant/{email}")
-async def get_restaurant(email: EmailStr):
+@app.get("/restaurant/{restaurant_id}")
+async def get_restaurant(restaurant_id: str):
     try:
-        restaurant_data = user_collection.find_one({"email": email})
+        restaurant_id = ObjectId(restaurant_id)
+        print(restaurant_id)
+        restaurant_data = user_collection.find_one({"_id": restaurant_id})
+        print(restaurant_data)
 
         if restaurant_data:
             return {
@@ -124,12 +135,122 @@ async def get_restaurant(email: EmailStr):
     except Exception as e:
         return {"error": str(e)}
 
+
+@app.post("/menu/{restaurant_id}")
+def create_menu_item(restaurant_id: str, item: MenuItem):
+    try:
+        restaurant_id = ObjectId(restaurant_id)
+
+        menu_data = {
+            "item_name": item.item_name,
+            "description": item.description,
+            "price": item.price,
+            "ingredients": item.ingredients
+        }
+
+        # Generate a new ObjectId for the menu item and use it as _id.
+        menu_item_id = ObjectId()
+        menu_data["_id"] = menu_item_id
+
+        user_collection.update_one(
+            {"_id": restaurant_id},
+            {"$push": {"menu": menu_data}}
+        )
+
+        return {"message": "Menu item created successfully"}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/menu/{restaurant_id}")
+def get_menu_items(restaurant_id: str):
+    try:
+        restaurant_id = ObjectId(restaurant_id)
+        restaurant_data = user_collection.find_one({"_id": restaurant_id})
+
+        if restaurant_data is None:
+            return {"message": "Restaurant not found"}
+
+        menu_items = restaurant_data.get("menu", ())
+
+        formatted_menu_items = [{"item_name": item["item_name"], "description": item["description"], "price": item["price"], "ingredients": item["ingredients"]} for item in menu_items]
+
+        return {"menu": formatted_menu_items}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.delete("/menu/{restaurant_id}/{item_name}")
+def delete_menu_item(restaurant_id: str, item_name: str):
+    try:
+        restaurant_id = ObjectId(restaurant_id)
+
+        restaurant_data = user_collection.find_one({"_id": restaurant_id})
+        if restaurant_data is None:
+            raise HTTPException(status_code=404, detail="Restaurant not found")
+
+        menu_items = restaurant_data.get("menu", ())
+        matching_items = [item for item in menu_items if item["item_name"] == item_name]
+
+        if not matching_items:
+            raise HTTPException(status_code=404, detail="Menu item not found")
+
+        user_collection.update_one(
+            {"_id": restaurant_id},
+            {"$pull": {"menu": {"item_name": item_name}}}
+        )
+
+        return {"message": "Menu item deleted successfully"}
+
+    except HTTPException as e:
+        raise e
+
+    except Exception as e:
+        return {"error": str(e)}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+
+
+# @app.get("/menu/{restaurant_id}")
+# def get_menu_items(restaurant_id: str):
+#     try:
+#         restaurant_id = ObjectId(restaurant_id)
+#         restaurant_data = user_collection.find_one({"_id": restaurant_id})
+
+#         if restaurant_data is None:
+#             return {"message": "Restaurant not found"}
+
+#         menu_items = restaurant_data.get("menu", ())
+#         print(menu_items)
+
+#         formatted_menu_items = [{"menu_item_id": str(item["_id"]), **item} for item in menu_items]
+
+#         return {"menu": formatted_menu_items}
+#     except Exception as e:
+#         return {"error": str(e)}
+
+#@app.delete("/menu/{restaurant_id}/{menu_item_id}")
+# def delete_menu_item(restaurant_id: str, menu_item_id: str):
+#     restaurant_id = ObjectId(restaurant_id)
+#     menu_item_id = ObjectId(menu_item_id)
+    
+#     result = user_collection.update_one(
+#         {"_id": restaurant_id},
+#         {"$pull": {"menu": {"_id": menu_item_id}}}
+#     )
+    
+#     if result.modified_count > 0:
+#         return {"message": "Menu item deleted successfully"}
+#     else:
+#         return {"message": "Menu item not found"}
+
 
  # photo: UploadFile
     # license: UploadFile

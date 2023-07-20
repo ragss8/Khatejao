@@ -1,44 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import RestaurantContainer from './RestaurantContainer';
 import store from './Store';
 import { fetchRestaurantDetails } from './Action';
-import "./RestaurantCont.css";
-import { useState, useEffect } from 'react';
-
+import './RestaurantCont.css';
 
 const RestaurantInfo = () => {
-    const [email, setEmail] = useState('');
-  
-    useEffect(() => {
-      const storedEmail = localStorage.getItem('restaurantEmail');
-      if (storedEmail) {
-        setEmail(storedEmail);
-        store.dispatch(fetchRestaurantDetails(storedEmail));
-      }
-    }, []);
-  
-    const handleEmailChange = (event) => {
-      const newEmail = event.target.value;
-      setEmail(newEmail);
-      localStorage.setItem('restaurantEmail', newEmail);
-      store.dispatch(fetchRestaurantDetails(newEmail));
-    };
-  
-    return (
-        <Provider store={store}>
-          <div className="app-container">
-            <h1 className="app-title">Restaurant Details</h1>
-            <form>
-              <label className="email-label">
-                Enter email for info:
-                <input className="email-input" type="email" value={email} onChange={handleEmailChange} required />
-              </label>
-            </form>
-            <RestaurantContainer />
-          </div>
-        </Provider>
-      );
+  const [restaurant_id, setRestaurant_id] = useState('');
+
+  useEffect(() => {
+    const storedRestaurant_id = localStorage.getItem('restaurant_id');
+    if (storedRestaurant_id) {
+      setRestaurant_id(storedRestaurant_id);
+      store.dispatch(fetchRestaurantDetails(storedRestaurant_id));
+    }
+  }, []);
+
+  const handleIdChange = (event) => {
+    const newId = event.target.value;
+    setRestaurant_id(newId);
+    localStorage.setItem('restaurant_id', newId);
+    store.dispatch(fetchRestaurantDetails(newId));
   };
 
-  export default RestaurantInfo;
+  return (
+    <Provider store={store}>
+      <div className="app-container">
+        <h1 className="app-title">Restaurant Details</h1>
+        <form>
+          <label className="email-label">
+            Enter ID for info:
+            <input
+              className="email-input"
+              type="text"
+              value={restaurant_id}
+              onChange={handleIdChange}
+              required
+            />
+          </label>
+        </form>
+        <div className='clickable'>
+        <RestaurantContainer />
+        </div>
+      </div>
+    </Provider>
+  );
+};
+
+export default RestaurantInfo;
