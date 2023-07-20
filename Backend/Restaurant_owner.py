@@ -148,7 +148,6 @@ def create_menu_item(restaurant_id: str, item: MenuItem):
             "ingredients": item.ingredients
         }
 
-        # Generate a new ObjectId for the menu item and use it as _id.
         menu_item_id = ObjectId()
         menu_data["_id"] = menu_item_id
 
