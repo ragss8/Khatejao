@@ -1,70 +1,43 @@
-# Getting Started with Create React App
+1.Introduction:
+This is a clone of food delivery app , that basically should do things like
+- user logins orders a food
+- the system picks up near by drivers
+- assigns them and show them on the map
+- real location,Just like how swiggy works but with minimal operations.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+2.what has been done till now?
+-Home page , that has welcome page and the rendering of main component and auto detect the location using "opencageData"
+-It has got signup and Login Buttons to access the main component.
+*On clicking you get the forms for respective users may be the
+--Application_User
+--Restaurant_Owner
+--Delivery_Partner
+*Same goes on with the Login 
+IMPLEMENTED BACKEND CODE FOR CREATIN USER, LOGGING IN, STORING THE INFO FOR THE SAME, LOGOUT(Not working as of now,as implemention for storing the session_tokens and logging out is remaining)endpoints.
+Note: Both for Login and Signup The forms render on the same page on the App Component as an overlay.
 
-In the project directory, you can run:
 
-### `npm start`
+3.->Minimal things work as of now when refered to the Introduction, but the implementation for major operations has been started since a day or two
+  what has been implemented?
+--Storing the Restaurant Information by post Request.
+--Using Redux thunk retrieving the RestaurantDetails as a prop to show the Restaurant_Name,delivery_Time and contact_Info as of now and show up in the Restaurant_Container
+--same goes for Delivery like Storing the Delivery_Partners Information.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+4.What will be done in upcoming days?
+-adding menuItems under the Object_id's of the restaurant and storing the same and making it accessible on the restaurantList-container, this would be ready for selecting the items and adding it to cart for ordering it.
+-create a Handle the form submission and send the order details to the backend.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+5.Backend Driver Selection:
+-Implement a backend algorithm or logic to select nearby drivers based on the user's location and driver availability.
+Retrieve the driver information from the backend and send it back to the frontend.
+Frontend Driver Display:
 
-### `npm test`
+-Create a component to display the available drivers.
+Receive the driver information from the backend and render it in the component.
+Driver Selection:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+-Implement a mechanism in the frontend to allow the user to select a driver from the displayed options.
+Handle the user's selection and send the selected driver information to the backend for further processing.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  
