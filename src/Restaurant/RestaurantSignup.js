@@ -13,7 +13,7 @@ const Restaurant = () => {
     e.preventDefault();
 
     try{
-      const response = await axios.post('http://localhost:8000/restaurantsignup',{
+      const response = await axios.post('http://localhost:8002/restaurantsignup',{
       restaurantName: restaurantName,
       email:email,
       password:password, 

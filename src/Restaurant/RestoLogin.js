@@ -23,7 +23,7 @@ const RestoLogin = ({ onClose }) => {
     e.preventDefault();
   
     try {
-      const response = await axios.post('http://localhost:8000/restologin', {
+      const response = await axios.post('http://localhost:8002/restologin', {
         email,
         password,
       });
@@ -43,7 +43,6 @@ const RestoLogin = ({ onClose }) => {
 
   return (
     <div className="login-form-container">
-      {/* <h2 className="login-title"></h2> */}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="email">Email:</label>

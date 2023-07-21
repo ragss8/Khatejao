@@ -8,10 +8,11 @@ import Brands from "../Brands/Brands";
 import Header  from '../Header/Header';
 import Advertisement from '../Ad/Advertisement';
 import NavigationBar from '../Nav/NavigationBar';
-import RestaurantList from '../Restaurant/RestaurantList';
-import RestaurantContainer from '../Restaurant/Redux/RestaurantContainer';
+import "../Restaurant/RestaurantList.css";
 import { Provider } from 'react-redux';
-import store from '../Restaurant/Redux/Store';
+import Store from '../User/RestaurantRedux/Store';
+import Rest from "../User/RestaurantRedux/Rest";
+
 
 const Main = () => {
   const location = useLocation();
@@ -43,13 +44,9 @@ const Main = () => {
       <Advertisement/>
       <h3>Browse by Brands :</h3>
       <Brands />
-      <Provider store={store}>
-      <div className="app-container">
-        <h1 className="app-title">Restaurant Details</h1>
-        <RestaurantContainer />
-      </div>
-    </Provider>
-      <RestaurantList />
+      <Provider store={Store}>
+        <Rest/>
+      </Provider>
       </div>
       </div>
     </div>

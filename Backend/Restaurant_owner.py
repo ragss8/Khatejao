@@ -86,6 +86,43 @@ def login(form: LoginForm):
     )
     return {"session_token": session_token, "message": "Login successful"}
 
+#This is a endpoint to get all the restaurants in the user_collection
+@app.get("/restaurants")
+async def get_all_restaurants():
+    try:
+        restaurants = user_collection.find({})
+        restaurant_list = []
+
+        for restaurant in restaurants:
+            restaurant_data = {
+                "restaurantName": restaurant["restaurantName"],
+                "address": restaurant["address"],
+                "cuisineType": restaurant["cuisineType"],
+                "deliveryTime": restaurant["deliveryTime"], 
+                "averageRating": restaurant["averageRating"], 
+            }
+            restaurant_list.append(restaurant_data)
+
+        return restaurant_list
+
+    except Exception as e:
+        return {"error": str(e)}
+
+
+#Endpoint to get the _id or so called restaurant_id
+@app.get("/get-user-id/{email}")
+async def get_user_id(email: EmailStr):
+    try:
+        existing_user = user_collection.find_one({"email": email})
+        if not existing_user:
+            return {"error": "User not found"}
+
+        return {"_id": str(existing_user["_id"])}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+# Endpoint for Updating the restaurant details
 @app.put("/update-restaurant/{email}")
 async def update_restaurant(email: EmailStr, form: RestaurantForm):
     try:
@@ -114,13 +151,12 @@ async def update_restaurant(email: EmailStr, form: RestaurantForm):
     except Exception as e:
         return {"error": str(e)}
 
+#Endpoint to get Specific details of the restaurant to performs [task]
 @app.get("/restaurant/{restaurant_id}")
 async def get_restaurant(restaurant_id: str):
     try:
         restaurant_id = ObjectId(restaurant_id)
-        print(restaurant_id)
         restaurant_data = user_collection.find_one({"_id": restaurant_id})
-        print(restaurant_data)
 
         if restaurant_data:
             return {
@@ -135,7 +171,7 @@ async def get_restaurant(restaurant_id: str):
     except Exception as e:
         return {"error": str(e)}
 
-
+#Endpoint to store the menu item details into the restaurant
 @app.post("/menu/{restaurant_id}")
 def create_menu_item(restaurant_id: str, item: MenuItem):
     try:
@@ -161,6 +197,7 @@ def create_menu_item(restaurant_id: str, item: MenuItem):
     except Exception as e:
         return {"error": str(e)}
 
+#Endpoint to get the details of the menu stored in the restaurant
 @app.get("/menu/{restaurant_id}")
 def get_menu_items(restaurant_id: str):
     try:
@@ -178,7 +215,29 @@ def get_menu_items(restaurant_id: str):
 
     except Exception as e:
         return {"error": str(e)}
+    
 
+from bson import ObjectId
+
+@app.get("/menu")
+def get_menu_items(restaurant_name: str):
+    try:
+        restaurant_data = user_collection.find_one({"restaurantName": restaurant_name})
+
+        if restaurant_data is None:
+            return {"message": "Restaurant not found"}
+
+        menu_items = restaurant_data.get("menu", ())
+
+        formatted_menu_items = [{"item_name": item["item_name"], "description": item["description"], "price": item["price"], "ingredients": item["ingredients"]} for item in menu_items]
+
+        return {"menu": formatted_menu_items}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+
+#Endpoint to delete the menu item from the menu stored under the restaurant_id
 @app.delete("/menu/{restaurant_id}/{item_name}")
 def delete_menu_item(restaurant_id: str, item_name: str):
     try:

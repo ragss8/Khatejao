@@ -28,7 +28,7 @@ const MenuCont = ({ restaurant_id }) => {
       {menuDetails && (
         <>
           <h2 className="menu-title">Menu Items</h2>
-          <ul>
+          <ol>
             {menuDetails.map((item) => (
               <li key={item.menu_item_id} className="menu-item">
                 <input type="checkbox" className="menu-checkbox" />
@@ -44,7 +44,7 @@ const MenuCont = ({ restaurant_id }) => {
                 </button>
               </li>
             ))}
-          </ul>
+          </ol>
         </>
       )}
     </div>

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import { useState } from 'react';
 import '../User/Main.css';
 import axios from 'axios';
-import Sidebar from "../Sidebar/Sidebar";
+// import Sidebar from "../Sidebar/Sidebar";
 import Header  from '../Header/Header';
 import NavigationBar from '../Nav/NavigationBar';
 import RestaurantInfo from './Redux/RestaurantInfo';
@@ -13,7 +13,7 @@ const Main = () => {
   const sessionToken = location.state?.sessionToken;
   const handleLogout = () => {
     axios
-      .post('http://localhost:8000/logout', { session_token: sessionToken })
+      .post('http://localhost:8002/logout', { session_token: sessionToken })
       .then((response) => {
         console.log('User logged out');
       })
@@ -26,6 +26,7 @@ const Main = () => {
   };
 
   const RestaurantForm = () => {
+    const [userId, setUserId] = useState('');
     const [restaurantName, setRestaurantName] = useState(
       localStorage.getItem('restaurantName') || ''
     );
@@ -115,7 +116,7 @@ const Main = () => {
         averageRating,
       };
   
-      const url = `http://localhost:8000/update-restaurant/${email}`;
+      const url = `http://localhost:8002/update-restaurant/${email}`;
       axios
         .put(url, payload)
         .then((response) => {
@@ -130,6 +131,16 @@ const Main = () => {
     const handleCheckboxChange = (event) => {
         setAgreeTerms(event.target.checked);
       }; 
+
+    const handleGetUserId = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8002/get-user-id/${email}`);
+        setUserId(response.data._id);
+      } catch (error) {
+        console.error('Error fetching user ID:', error);
+      }
+    };
+      
 
     return (
         <div>
@@ -235,6 +246,17 @@ const Main = () => {
         <button type="submit" disabled={!agreeTerms}>
         Submit
         </button>
+        <div style={{display:"none"}}>
+      <input
+        type="email"
+        placeholder="Enter email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      </div>
+      <p>Click Below!!Copy the UserID for further Purposes:</p>
+      <button onClick={handleGetUserId}>Get ID</button>
+      {userId && <p>User ID: {userId}</p>}
       </form>
     </div>
         </div>
@@ -247,7 +269,7 @@ const Main = () => {
       <Header />
       <NavigationBar handleLogout={handleLogout} />
       <div className='container'>
-      <Sidebar />
+      {/* <Sidebar /> */}
       <div className='content'>
       <RestaurantForm/>
       <RestaurantInfo/>

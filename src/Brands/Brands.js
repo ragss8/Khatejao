@@ -7,7 +7,7 @@ import img4 from "../images/mcd.jpeg";
 import img5 from "../images/lol.png";
 import img6 from "../images/on.png";
 import img7 from "../images/pp.png";
-import img8 from "../images/cw.png";
+// import img8 from "../images/cw.png";
 
 const Brands = () => {
     return(
@@ -40,10 +40,10 @@ const Brands = () => {
         <img src={img7} alt="Pizza" />
         <p className="description">Popoyes</p>
         </div>
-        <div className='image-container'>
+        {/* <div className='image-container'>
         <img src={img8} alt="Pizza" />
         <p className="description">Chinese Wok!</p>
-        </div>   
+        </div>    */}
     </div>
     );
   };

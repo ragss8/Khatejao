@@ -1,7 +1,7 @@
 import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
 import Header from '../Header/Header';
-import Sidebar from '../Sidebar/Sidebar';
+// import Sidebar from '../Sidebar/Sidebar';
 import './Menu.css';
 import { useDispatch, Provider } from 'react-redux';
 import MenuCont from './MenuRedux/MenuCont';
@@ -54,7 +54,7 @@ const Menu = () => {
     };
 
     axios
-      .post(`http://localhost:8000/menu/${restaurantId}`, newItem)
+      .post(`http://localhost:8002/menu/${restaurantId}`, newItem)
       .then((response) => {
         console.log(response.data);
         setItem_name('');
@@ -72,16 +72,20 @@ const Menu = () => {
     <div>
       <Header />
       <div className="container">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <div className="menu-container">
           <h2 className="menu-heading">Menu</h2>
           <form className="menu-form">
+          <label className="menu-label">
+                Enter User ID for inserting Menuitems:
+              </label>
             <input
               type="text"
               className="menu-input"
               placeholder="Restaurant ID"
               value={restaurantId}
               onChange={handleRestaurantIdChange}
+              style={{width:"150px"}}
             />
             <br />
             <div className="menu-input-row">

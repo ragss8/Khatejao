@@ -10,7 +10,7 @@ export const fetchRestaurantDetails = (restaurant_id) => {
     try {
       dispatch({ type: FETCH_RESTAURANT_DETAILS_REQUEST });
 
-      const response = await axios.get(`http://localhost:8000/restaurant/${restaurant_id}`);
+      const response = await axios.get(`http://localhost:8002/restaurant/${restaurant_id}`);
       const restaurantDetails = response.data;
 
       dispatch({

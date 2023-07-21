@@ -14,7 +14,7 @@ export const fetchMenuItems = (restaurant_id) => {
     try {
       dispatch({ type: FETCH_MENU_REQUEST });
 
-      const response = await axios.get(`http://localhost:8000/menu/${restaurant_id}`);
+      const response = await axios.get(`http://localhost:8002/menu/${restaurant_id}`);
       const menuDetails = response.data.menu;
 
       dispatch({
@@ -37,7 +37,7 @@ export const setMenuDetails = (menuDetails) => {
 export const addMenuItem = (restaurant_id, newItem) => {
   return async (dispatch) => {
     try {
-      await axios.post(`http://localhost:8000/menu/${restaurant_id}`, newItem);
+      await axios.post(`http://localhost:8002/menu/${restaurant_id}`, newItem);
 
       dispatch({
         type: ADD_MENU_ITEM_SUCCESS,
@@ -52,7 +52,7 @@ export const addMenuItem = (restaurant_id, newItem) => {
 export const deleteMenuItem = (restaurant_id, item_name) => {
   return async (dispatch) => {
     try {
-      await axios.delete(`http://localhost:8000/menu/${restaurant_id}/${item_name}`);
+      await axios.delete(`http://localhost:8002/menu/${restaurant_id}/${item_name}`);
 
       dispatch({
         type: DELETE_MENU_ITEM_SUCCESS,

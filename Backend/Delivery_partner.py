@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta, timezone
 import secrets
 
-app = FastAPI()
+app1 = FastAPI()
 
 class SignupForm(BaseModel):
     name: str
@@ -21,7 +21,6 @@ class PartnerCredentials(BaseModel):
     vehicle_details: UploadFile
     photo: UploadFile     
    
-app = FastAPI()
 
 mongodb_uri = 'mongodb+srv://raghugaikwad8641:Raghugaikwad8@userinfo.d4n8sns.mongodb.net/?retryWrites=true&w=majority'
 port = 8001
@@ -30,7 +29,7 @@ db = client['Khatejao']
 user_collection = db['Delivery_management']
 
 
-@app.post("/Deliverysignup")
+@app1.post("/Deliverysignup")
 async def signup(form: SignupForm):
     try:
         user_exists = user_collection.find_one({"email": form.email})
@@ -57,7 +56,7 @@ async def signup(form: SignupForm):
     except Exception as e:
         return {"error": str(e)}    
 
-@app.post("/DeliveryPartnerLogin")
+@app1.post("/DeliveryPartnerLogin")
 async def login(form: LoginForm):
     existing_user = user_collection.find_one({"email": form.email})
 
@@ -75,17 +74,17 @@ async def login(form: LoginForm):
     )
     return {"session_token": session_token, "message": "Login successful"} 
 
-@app.post("/partner-credentials")
-async def submit_partner_credentials(vehicle_details: UploadFile = File(...), photo: UploadFile = File(...)):
-    user_collection.insert_one({
-        'vehicle_details': vehicle_details.filename,
-        'photo': photo.filename
-    })
+# @app1.post("/partner-credentials")
+# async def submit_partner_credentials(vehicle_details: UploadFile = File(...), photo: UploadFile = File(...)):
+#     user_collection.insert_one({
+#         'vehicle_details': vehicle_details.filename,
+#         'photo': photo.filename
+#     })
 
-    return {"message": "Partner credentials submitted successfully"}
+#     return {"message": "Partner credentials submitted successfully"}
 
 
-app.add_middleware(
+app1.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],

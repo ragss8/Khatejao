@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta, timezone
 import secrets
 
-app = FastAPI()
+user = FastAPI()
 
 mongodb_uri = 'mongodb+srv://raghugaikwad8641:Raghugaikwad8@userinfo.d4n8sns.mongodb.net/?retryWrites=true&w=majority'
 port = 8003
@@ -27,7 +27,7 @@ class LoginForm(BaseModel):
 class UserLogout(BaseModel):
     session_token: str    
 
-@app.post("/signup")
+@user.post("/signup")
 async def signup(form: SignupForm):
     try:
         user_exists = user_collection.find_one({"email": form.email})
@@ -56,7 +56,7 @@ async def signup(form: SignupForm):
         return {"error": str(e)}
 
 
-@app.post("/login")
+@user.post("/login")
 def login(form: LoginForm):
     existing_user = user_collection.find_one({"email": form.email})
 
@@ -74,7 +74,7 @@ def login(form: LoginForm):
     )
     return {"session_token": session_token, "message": "Login successful"}
 
-@app.post("/logout")
+@user.post("/logout")
 async def logout_user(
     user_logout: UserLogout,
     response: Response
@@ -87,7 +87,7 @@ async def logout_user(
     return {"message": "Logout successful"}
 
     
-app.add_middleware(
+user.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
