@@ -18,7 +18,7 @@ IMPLEMENTED BACKEND CODE FOR CREATIN USER, LOGGING IN, STORING THE INFO FOR THE 
 Note: Both for Login and Signup The forms render on the same page on the App Component as an overlay.
 
 
-3.->The implementation for major operations is done , still three functionalities are remaining as of now:
+3.->The implementation for major operations is done .
   what has been implemented?
 --Storing the Restaurant Information by post Request.
 --Using Redux thunk retrieving the RestaurantDetails as a prop to show the Restaurant_Name,delivery_Time and contact_Info as of now and show up in the Restaurant_Container
