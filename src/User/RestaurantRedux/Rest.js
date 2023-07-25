@@ -1,17 +1,89 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchRestaurants } from '../RestaurantRedux/Action';
-import { useHistory } from 'react-router-dom'; 
+import { fetchRestaurants, fetchMenuItems } from '../RestaurantRedux/Action';
+import axios from 'axios'; 
 import '../RestaurantRedux/Rest.css';
 
 const App = () => {
   const dispatch = useDispatch();
-  const { restaurants, loading, error } = useSelector((state) => state.restaurant);
-  const history = useHistory();
+  const { restaurants, menuItems, loading, error } = useSelector((state) => state.restaurant);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [orderItems, setOrderItems] = useState({});
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [phonenumber, setPhonenumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [userDetails, setUserDetails] = useState(null);
+  const [, setError] = useState(null);
 
   useEffect(() => {
     dispatch(fetchRestaurants());
   }, [dispatch]);
+
+  const handleRestaurantClick = (restaurantName) => {
+    setSelectedRestaurant(restaurantName);
+    dispatch(fetchMenuItems(restaurantName));
+  };
+
+  const handleIncrement = (itemName) => {
+    setOrderItems((prevOrderItems) => ({
+      ...prevOrderItems,
+      [itemName]: (prevOrderItems[itemName] || 0) + 1,
+    }));
+  };
+
+  const handleDecrement = (itemName) => {
+    setOrderItems((prevOrderItems) => ({
+      ...prevOrderItems,
+      [itemName]: Math.max((prevOrderItems[itemName] || 0) - 1, 0),
+    }));
+  };
+
+  const handleConfirmOrder = () => {
+    const orderData = {
+      restaurantName: selectedRestaurant,
+      name: name, 
+      address: address,
+      phonenumber: phonenumber, 
+      items: orderItems,
+    };
+    
+    axios
+      .post(`http://localhost:8002/orders/${selectedRestaurant}`, orderData) 
+      .then((response) => {
+        console.log('Order Confirmed:', response.data);
+      })
+      .catch((error) => {
+        console.error('Error confirming order:', error);
+      });
+  };
+
+  const handleInputChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const getUserDetails = (email) => {
+    axios
+      .get(`http://localhost:8000/user/${email}`)
+      .then((response) => {
+        setUserDetails(response.data);
+        setError(null);
+      })
+      .catch((error) => {
+        setUserDetails(null);
+        setError(error.response?.data?.detail || 'User not found');
+      });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    getUserDetails(email);
+    if (userDetails) {
+      setName(userDetails.name);
+      setAddress(userDetails.address);
+      setPhonenumber(userDetails.phone_number);
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -20,10 +92,6 @@ const App = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
-
-  const handleRestaurantClick = (restaurantName) => {
-    history.push(`/menu?restaurant=${restaurantName}`);
-  };
 
   return (
     <div className="rest-container">
@@ -37,13 +105,79 @@ const App = () => {
             <strong>{restaurant.restaurantName}</strong>
             <div className="restaurant-details">
               <div>{restaurant.address}</div>
-              <div>Cuisine Type: {restaurant.cuisineType}</div> 
-              <div>Delivery Time: {restaurant.deliveryTime}</div> 
-              <div>Average Rating: {restaurant.averageRating}</div> 
+              <div>Cuisine Type: {restaurant.cuisineType}</div>
+              <div>Delivery Time: {restaurant.deliveryTime}</div>
+              <div>Average Rating: {restaurant.averageRating}</div>
             </div>
           </li>
         ))}
       </ul>
+
+      {selectedRestaurant && (
+        <div className="menu-overlay">
+          <div className="menu-content">
+            <h2>Menu Items for {selectedRestaurant}</h2>
+            <ul>
+              {menuItems.map((item) => (
+                <li key={item.item_name}>
+                  <strong>{item.item_name}</strong> - {item.description} - {item.ingredients} - ${item.price}
+                  <div className='increment'>
+                    <button onClick={() => handleDecrement(item.item_name)}>-</button>
+                    {orderItems[item.item_name] || 0}
+                    <button onClick={() => handleIncrement(item.item_name)}>+</button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <div>
+      <form onSubmit={handleSubmit}>
+        <input type="email" value={email} onChange={handleInputChange} />
+        <button type="submit">Get User Details</button>
+      </form>
+      {userDetails && (
+        <div>
+          <p>Name: {userDetails.name}</p>
+          <p>Email: {userDetails.email}</p>
+          <p>Address: {userDetails.address}</p>
+          <p>Phone Number: {userDetails.phone_number}</p>
+        </div>
+      )}
+      {error && <p>Error: {error}</p>}
+    </div>
+            <div>
+              <input
+                type="text"
+                placeholder="Your Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{ width: "30%", border: "1px solid black", marginBottom: "10px" }}
+              />
+            </div>
+            <div>
+              <input
+                type="text"
+                placeholder="Your Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                style={{ width: "100%", border: "1px solid black", marginBottom: "10px" }}
+              />
+            </div>
+            {/* Add input for Phone Number */}
+            <div>
+              <input
+                type="text"
+                placeholder="Your Phone Number"
+                value={phonenumber}
+                onChange={(e) => setPhonenumber(e.target.value)}
+                style={{ width: "100%", border: "1px solid black", marginBottom: "10px" }}
+              />
+            </div>
+
+            <button onClick={handleConfirmOrder} style={{ width: 'max-content' }}>Confirm Order</button>
+            <button onClick={() => setSelectedRestaurant(null)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

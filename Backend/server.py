@@ -55,6 +55,19 @@ async def signup(form: SignupForm):
     except Exception as e:
         return {"error": str(e)}
 
+@user.get("/user/{email}")
+async def get_user_details(email: str):
+    try:
+        user_data = user_collection.find_one({"email": email}, {"_id": 0, "name": 1, "address": 1, "phone_number": 1})
+
+        if not user_data:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return user_data
+
+    except Exception as e:
+        return {"error": str(e)}
+
 
 @user.post("/login")
 def login(form: LoginForm):

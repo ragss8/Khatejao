@@ -14,7 +14,7 @@ export const fetchMenuItems = (restaurant_id) => {
     try {
       dispatch({ type: FETCH_MENU_REQUEST });
 
-      const response = await axios.get(`http://localhost:8002/menu/${restaurant_id}`);
+      const response = await axios.get(`http://localhost:8002/menu/id/${restaurant_id}`);
       const menuDetails = response.data.menu;
 
       dispatch({

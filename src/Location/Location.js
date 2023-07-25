@@ -144,9 +144,9 @@ function LocationInput({ onSignupClick , onLoginClick}) {
             placeholder="Enter your location"
             className="location-input"
           />
-          <button type="submit" className="location-submit">
+          {/* <button type="submit" className="location-submit">
             Search
-          </button>
+          </button> */}
         </form>
         <p className="auto-detect" onClick={handleAutoDetect}>
           Auto Detect

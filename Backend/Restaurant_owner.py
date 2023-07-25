@@ -33,14 +33,16 @@ class MenuItem(BaseModel):
     description: str
     price: float
     ingredients: str
-  
+
+# class Order(BaseModel):
+#     items: dict    
 
 mongodb_uri = 'mongodb+srv://raghugaikwad8641:Raghugaikwad8@userinfo.d4n8sns.mongodb.net/?retryWrites=true&w=majority'
 port = 8002
 client = MongoClient(mongodb_uri, port)
 db = client['Khatejao']
 user_collection = db['Restaurant_management']
-gridfs = GridFS(db, collection="files")
+order_collection = db['Orders']    
 
 @app.post("/restaurantsignup")
 async def signup(form: SignupForm):
@@ -107,7 +109,6 @@ async def get_all_restaurants():
 
     except Exception as e:
         return {"error": str(e)}
-
 
 #Endpoint to get the _id or so called restaurant_id
 @app.get("/get-user-id/{email}")
@@ -198,8 +199,8 @@ def create_menu_item(restaurant_id: str, item: MenuItem):
         return {"error": str(e)}
 
 #Endpoint to get the details of the menu stored in the restaurant
-@app.get("/menu/{restaurant_id}")
-def get_menu_items(restaurant_id: str):
+@app.get("/menu/id/{restaurant_id}")
+def get_menu_items_by_id(restaurant_id: str):
     try:
         restaurant_id = ObjectId(restaurant_id)
         restaurant_data = user_collection.find_one({"_id": restaurant_id})
@@ -209,18 +210,23 @@ def get_menu_items(restaurant_id: str):
 
         menu_items = restaurant_data.get("menu", ())
 
-        formatted_menu_items = [{"item_name": item["item_name"], "description": item["description"], "price": item["price"], "ingredients": item["ingredients"]} for item in menu_items]
+        formatted_menu_items = [
+            {
+                "item_name": item["item_name"],
+                "description": item["description"],
+                "price": item["price"],
+                "ingredients": item["ingredients"],
+            }
+            for item in menu_items
+        ]
 
         return {"menu": formatted_menu_items}
 
     except Exception as e:
         return {"error": str(e)}
-    
 
-from bson import ObjectId
-
-@app.get("/menu")
-def get_menu_items(restaurant_name: str):
+@app.get("/menu/name/{restaurant_name}")
+def get_menu_items_by_name(restaurant_name: str):
     try:
         restaurant_data = user_collection.find_one({"restaurantName": restaurant_name})
 
@@ -229,13 +235,133 @@ def get_menu_items(restaurant_name: str):
 
         menu_items = restaurant_data.get("menu", ())
 
-        formatted_menu_items = [{"item_name": item["item_name"], "description": item["description"], "price": item["price"], "ingredients": item["ingredients"]} for item in menu_items]
+        formatted_menu_items = [
+            {
+                "item_name": item["item_name"],
+                "description": item["description"],
+                "price": item["price"],
+                "ingredients": item["ingredients"],
+            }
+            for item in menu_items
+        ]
 
         return {"menu": formatted_menu_items}
 
     except Exception as e:
         return {"error": str(e)}
 
+# @app.post("/orders/{restaurant_name}", response_model=dict)
+# async def place_order(restaurant_name: str, order: Order):
+#     try:
+#         restaurant_data = user_collection.find_one({"restaurantName": restaurant_name})
+
+#         if restaurant_data is None:
+#             return {"message": "Restaurant not found"}
+
+#         total_price = 0.0
+#         order_items = []
+
+#         for item_name, quantity in order.items.items():
+#             for item in restaurant_data.get("menu", ()):
+#                 if item["item_name"] == item_name:
+#                     total_price += item["price"] * quantity
+#                     order_items.append({
+#                         "item_name": item["item_name"],
+#                         "quantity": quantity,
+#                         "price_per_item": item["price"],
+#                     })
+
+#         order_data = {
+#             "restaurant_name": restaurant_name,
+#             "total_price": total_price,
+#             "order_items": order_items,
+#         }
+
+#         order_id = order_collection.insert_one(order_data).inserted_id
+
+#         return {
+#             "order_id": str(order_id),
+#             "restaurant_name": restaurant_name,
+#             "total_price": total_price,
+#             "order_items": order_items,
+#         }
+
+#     except Exception as e:
+#         return {"error": str(e)}
+
+class Order(BaseModel):
+    items: dict
+    name: str
+    phonenumber: str
+    address: str
+
+@app.post("/orders/{restaurant_name}", response_model=dict)
+async def place_order(restaurant_name: str, order: Order):
+    try:
+        restaurant_data = user_collection.find_one({"restaurantName": restaurant_name})
+
+        if restaurant_data is None:
+            return {"message": "Restaurant not found"}
+
+        total_price = 0.0
+        order_items = []
+
+        for item_name, quantity in order.items.items():
+            for item in restaurant_data.get("menu", ()):
+                if item["item_name"] == item_name:
+                    total_price += item["price"] * quantity
+                    order_items.append({
+                        "item_name": item["item_name"],
+                        "quantity": quantity,
+                        "price_per_item": item["price"],
+                    })
+
+        order_data = {
+            "restaurant_name": restaurant_name,
+            "total_price": total_price,
+            "order_items": order_items,
+            "name": order.name,             # Add name to the order_data
+            "phonenumber": order.phonenumber, # Add phonenumber to the order_data
+            "address": order.address,       # Add address to the order_data
+        }
+
+        order_id = order_collection.insert_one(order_data).inserted_id
+
+        return {
+            "order_id": str(order_id),
+            "restaurant_name": restaurant_name,
+            "total_price": total_price,
+            "order_items": order_items,
+            "name": order.name,             # Include name in the response
+            "phonenumber": order.phonenumber, # Include phonenumber in the response
+            "address": order.address,       # Include address in the response
+        }
+
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/orders/{order_id}", response_model=dict)
+async def get_order(order_id: str):
+    try:
+        order_data = order_collection.find_one({"_id": ObjectId(order_id)})
+
+        if order_data is None:
+            return {"message": "Order not found"}
+
+        order_id = str(order_data["_id"])
+        restaurant_name = order_data["restaurant_name"]
+        total_price = order_data["total_price"]
+        order_items = order_data["order_items"]
+
+        return {
+            "order_id": order_id,
+            "restaurant_name": restaurant_name,
+            "total_price": total_price,
+            "order_items": order_items,
+        }
+
+    except Exception as e:
+        return {"error": str(e)}
 
 #Endpoint to delete the menu item from the menu stored under the restaurant_id
 @app.delete("/menu/{restaurant_id}/{item_name}")
