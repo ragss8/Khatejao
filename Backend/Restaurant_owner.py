@@ -5,6 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta, timezone,time
 import secrets
 from bson.objectid import ObjectId
+<<<<<<< HEAD
+=======
+from typing import Dict, List
+>>>>>>> a3dc7cf (update)
 
 app = FastAPI()
 
@@ -34,7 +38,11 @@ class MenuItem(BaseModel):
     ingredients: str
 
 class Order(BaseModel):
+<<<<<<< HEAD
     items: dict
+=======
+    items: Dict[str, int]
+>>>>>>> a3dc7cf (update)
     name: str
     phonenumber: str
     address: str
@@ -252,7 +260,10 @@ def get_menu_items_by_name(restaurant_name: str):
     except Exception as e:
         return {"error": str(e)}
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a3dc7cf (update)
 @app.post("/orders/{restaurant_name}", response_model=dict)
 async def place_order(restaurant_name: str, order: Order):
     try:
@@ -278,9 +289,15 @@ async def place_order(restaurant_name: str, order: Order):
             "restaurant_name": restaurant_name,
             "total_price": total_price,
             "order_items": order_items,
+<<<<<<< HEAD
             "name": order.name,             
             "phonenumber": order.phonenumber,
             "address": order.address,      
+=======
+            "name": order.name,
+            "phonenumber": order.phonenumber,
+            "address": order.address,
+>>>>>>> a3dc7cf (update)
         }
 
         order_id = order_collection.insert_one(order_data).inserted_id
@@ -290,14 +307,21 @@ async def place_order(restaurant_name: str, order: Order):
             "restaurant_name": restaurant_name,
             "total_price": total_price,
             "order_items": order_items,
+<<<<<<< HEAD
             "name": order.name,             
             "phonenumber": order.phonenumber, 
             "address": order.address,       
+=======
+            "name": order.name,
+            "phonenumber": order.phonenumber,
+            "address": order.address,
+>>>>>>> a3dc7cf (update)
         }
 
     except Exception as e:
         return {"error": str(e)}
     
+<<<<<<< HEAD
 @app.get("/orders/{restaurant_name}", response_model=list)
 async def get_orders_by_restaurant(restaurant_name: str):
     try:
@@ -314,6 +338,8 @@ async def get_orders_by_restaurant(restaurant_name: str):
     except Exception as e:
         return {"error": str(e)}
 
+=======
+>>>>>>> a3dc7cf (update)
 @app.get("/orders/{order_id}", response_model=dict)
 async def get_order(order_id: str):
     try:
@@ -331,6 +357,19 @@ async def get_order(order_id: str):
             "phonenumber": order_data["phonenumber"],
             "address": order_data["address"],
         }
+
+    except Exception as e:
+        return {"error": str(e)}    
+
+
+@app.get("/orders/restaurant/{restaurant_name}", response_model=List[Order])
+async def get_orders_by_restaurant(restaurant_name: str):
+    try:
+        orders = order_collection.find({"restaurant_name": restaurant_name})
+
+        orders_list = [Order(**order) for order in orders]
+
+        return orders_list
 
     except Exception as e:
         return {"error": str(e)}

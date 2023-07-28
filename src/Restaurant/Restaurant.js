@@ -11,7 +11,10 @@ import "./Order/Vieworder.css";
 const Restaurant = () => {
   const location = useLocation();
   const sessionToken = location.state?.sessionToken;
+<<<<<<< HEAD
   const [restaurantName, setRestaurantName] = useState('');
+=======
+>>>>>>> a3dc7cf (update)
 
   const handleLogout = () => {
     axios
@@ -29,6 +32,10 @@ const Restaurant = () => {
 
   const RestaurantForm = ({ restaurantName, setRestaurantName }) => {
     const [userId, setUserId] = useState('');
+<<<<<<< HEAD
+=======
+    const [restaurantName, setRestaurantName] = useState('');
+>>>>>>> a3dc7cf (update)
     const [address, setAddress] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
@@ -84,7 +91,12 @@ const Restaurant = () => {
 
     return (
       <div>
+<<<<<<< HEAD
         
+=======
+        <Order
+        />
+>>>>>>> a3dc7cf (update)
         <div className="policies-terms" style={{ width: "1400px" }}>
            <h2>Terms and Conditions *</h2>
             <p>Privacy Policy: The privacy policy describes how the app collects, uses, and protects the personal information of the food delivery partners. It may include details about data sharing, storage, and security measures.</p>
@@ -210,8 +222,12 @@ const Restaurant = () => {
       <NavigationBar handleLogout={handleLogout} />
       <div className='container'>
         <div className='content'>
+<<<<<<< HEAD
           <Order restaurantName={restaurantName}/>
           <RestaurantForm setRestaurantName={setRestaurantName}/>
+=======
+          <RestaurantForm />
+>>>>>>> a3dc7cf (update)
           <RestaurantInfo />
         </div>
       </div>

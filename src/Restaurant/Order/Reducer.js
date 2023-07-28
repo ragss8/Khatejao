@@ -2,7 +2,10 @@ import {
     FETCH_ORDERS_REQUEST,
     FETCH_ORDERS_SUCCESS,
     FETCH_ORDERS_FAILURE,
+<<<<<<< HEAD
     SET_RESTAURANT_NAME,
+=======
+>>>>>>> a3dc7cf (update)
   } from './Action';
   
   const initialState = {
@@ -36,6 +39,7 @@ import {
     }
   };
   
+<<<<<<< HEAD
   const restaurantNameReducer = (state = '', action) => {
     switch (action.type) {
       case SET_RESTAURANT_NAME:
@@ -46,4 +50,7 @@ import {
   };
   
   export { ordersReducer, restaurantNameReducer };
+=======
+  export default ordersReducer;
+>>>>>>> a3dc7cf (update)
   

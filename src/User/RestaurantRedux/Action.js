@@ -48,7 +48,10 @@ export const fetchMenuItems = (restaurantName) => {
 export const fetchOrderDetails = (orderId) => {
   return async (dispatch) => {
     try {
+<<<<<<< HEAD
       // Replace 'http://localhost:8002/orders' with the correct API endpoint for fetching order details
+=======
+>>>>>>> a3dc7cf (update)
       const response = await axios.get(`http://localhost:8002/orders/${orderId}`);
       const orderDetails = response.data;
 
