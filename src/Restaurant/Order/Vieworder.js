@@ -1,6 +1,3 @@
-
-
-
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrdersByRestaurant } from './Action';
@@ -42,24 +39,29 @@ const ViewOrders = () => {
         type='text'
         value={restaurantName}
         onChange={(e) => setRestaurantName(e.target.value)}
-        placeholder='Enter Restaurant Name'
+        placeholder='Enter Your Restaurant Name'
+        style={{border:"2px solid black",borderRadius:"5px",width:"200px",height:"30px", marginBottom:"15px"}}
       />
-      <button onClick={handleViewOrders}>View Orders</button>
+      <button onClick={handleViewOrders} style={{width:"max-content"}}>View Orders</button>
       {isButtonClicked && restaurantName.trim() !== '' && orders.length > 0 && (
         <div className='orders-overlay'>
-          <h3>Orders for {restaurantName}</h3>
-          <ul className='orders-list'>
-            {orders.map((order) => (
-              <li key={order._id}>
-                <div className='order-summary' onClick={() => toggleOrderDetails(order._id)}>
-                  <p>Order ID: {order._id}</p>
-                  <p>Restaurant Name: {order.restaurant_name}</p>
-                </div>
-                {selectedOrderId === order._id && (
-                  <div className='order-details-dropdown'>
+          <div className='orders-container'>
+            <div className='close-button' onClick={handleCloseOverlay}>
+              Close
+            </div>
+            <h3>Orders for {restaurantName}</h3>
+            <ul className='orders-list'>
+              {orders.map((order) => (
+                <li key={order._id}>
+                  <div className='order-summary' onClick={() => toggleOrderDetails(order._id)}>
+                    <p>Order ID: {order._id}</p>
+                    <p>Name: {order.name}</p>
+                  </div>
+                  {selectedOrderId === order._id && (
+                    <div className='order-details-dropdown'>
                     <h3>Order Details</h3>
                     <p>Total Price: {order.total_price}</p>
-                    <p>Name: {order.name}</p>
+                    <p>Restaurant Name: {order.restaurant_name}</p>
                     <p>Phone Number: {order.phonenumber}</p>
                     <p>Address: {order.address}</p>
                     <h4>Order Items:</h4>
@@ -72,11 +74,12 @@ const ViewOrders = () => {
                         </li>
                       ))}
                     </ul>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
     </div>

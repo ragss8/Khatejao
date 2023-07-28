@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta, timezone,time
 import secrets
 from bson.objectid import ObjectId
-from gridfs import GridFS
 
 app = FastAPI()
 
@@ -34,8 +33,11 @@ class MenuItem(BaseModel):
     price: float
     ingredients: str
 
-# class Order(BaseModel):
-#     items: dict    
+class Order(BaseModel):
+    items: dict
+    name: str
+    phonenumber: str
+    address: str
 
 mongodb_uri = 'mongodb+srv://raghugaikwad8641:Raghugaikwad8@userinfo.d4n8sns.mongodb.net/?retryWrites=true&w=majority'
 port = 8002
@@ -250,50 +252,6 @@ def get_menu_items_by_name(restaurant_name: str):
     except Exception as e:
         return {"error": str(e)}
 
-# @app.post("/orders/{restaurant_name}", response_model=dict)
-# async def place_order(restaurant_name: str, order: Order):
-#     try:
-#         restaurant_data = user_collection.find_one({"restaurantName": restaurant_name})
-
-#         if restaurant_data is None:
-#             return {"message": "Restaurant not found"}
-
-#         total_price = 0.0
-#         order_items = []
-
-#         for item_name, quantity in order.items.items():
-#             for item in restaurant_data.get("menu", ()):
-#                 if item["item_name"] == item_name:
-#                     total_price += item["price"] * quantity
-#                     order_items.append({
-#                         "item_name": item["item_name"],
-#                         "quantity": quantity,
-#                         "price_per_item": item["price"],
-#                     })
-
-#         order_data = {
-#             "restaurant_name": restaurant_name,
-#             "total_price": total_price,
-#             "order_items": order_items,
-#         }
-
-#         order_id = order_collection.insert_one(order_data).inserted_id
-
-#         return {
-#             "order_id": str(order_id),
-#             "restaurant_name": restaurant_name,
-#             "total_price": total_price,
-#             "order_items": order_items,
-#         }
-
-#     except Exception as e:
-#         return {"error": str(e)}
-
-class Order(BaseModel):
-    items: dict
-    name: str
-    phonenumber: str
-    address: str
 
 @app.post("/orders/{restaurant_name}", response_model=dict)
 async def place_order(restaurant_name: str, order: Order):
@@ -320,9 +278,9 @@ async def place_order(restaurant_name: str, order: Order):
             "restaurant_name": restaurant_name,
             "total_price": total_price,
             "order_items": order_items,
-            "name": order.name,             # Add name to the order_data
-            "phonenumber": order.phonenumber, # Add phonenumber to the order_data
-            "address": order.address,       # Add address to the order_data
+            "name": order.name,             
+            "phonenumber": order.phonenumber,
+            "address": order.address,      
         }
 
         order_id = order_collection.insert_one(order_data).inserted_id
@@ -332,10 +290,26 @@ async def place_order(restaurant_name: str, order: Order):
             "restaurant_name": restaurant_name,
             "total_price": total_price,
             "order_items": order_items,
-            "name": order.name,             # Include name in the response
-            "phonenumber": order.phonenumber, # Include phonenumber in the response
-            "address": order.address,       # Include address in the response
+            "name": order.name,             
+            "phonenumber": order.phonenumber, 
+            "address": order.address,       
         }
+
+    except Exception as e:
+        return {"error": str(e)}
+    
+@app.get("/orders/{restaurant_name}", response_model=list)
+async def get_orders_by_restaurant(restaurant_name: str):
+    try:
+        orders = list(order_collection.find({"restaurant_name": restaurant_name}))
+
+        if not orders:
+            return {"message": "No orders found for this restaurant"}
+
+        for order in orders:
+            order["_id"] = str(order["_id"])
+
+        return orders
 
     except Exception as e:
         return {"error": str(e)}
@@ -348,16 +322,14 @@ async def get_order(order_id: str):
         if order_data is None:
             return {"message": "Order not found"}
 
-        order_id = str(order_data["_id"])
-        restaurant_name = order_data["restaurant_name"]
-        total_price = order_data["total_price"]
-        order_items = order_data["order_items"]
-
         return {
-            "order_id": order_id,
-            "restaurant_name": restaurant_name,
-            "total_price": total_price,
-            "order_items": order_items,
+            "order_id": str(order_data["_id"]),
+            "restaurant_name": order_data["restaurant_name"],
+            "total_price": order_data["total_price"],
+            "order_items": order_data["order_items"],
+            "name": order_data["name"],
+            "phonenumber": order_data["phonenumber"],
+            "address": order_data["address"],
         }
 
     except Exception as e:

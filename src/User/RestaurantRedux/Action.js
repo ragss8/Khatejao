@@ -6,13 +6,15 @@ export const FETCH_RESTAURANTS_FAILURE = 'FETCH_RESTAURANTS_FAILURE';
 export const FETCH_MENU_REQUEST = 'FETCH_MENU_REQUEST';
 export const FETCH_MENU_SUCCESS = 'FETCH_MENU_SUCCESS';
 export const FETCH_MENU_FAILURE = 'FETCH_MENU_FAILURE';
+export const FETCH_ORDER_SUCCESS = 'FETCH_ORDER_SUCCESS';
+export const FETCH_ORDER_FAILURE = 'FETCH_ORDER_FAILURE';
 
 export const fetchRestaurants = () => {
   return async (dispatch) => {
     try {
       dispatch({ type: FETCH_RESTAURANTS_REQUEST });
 
-      const response = await axios.get('http://localhost:8002/restaurants'); 
+      const response = await axios.get('http://localhost:8002/restaurants');
       const restaurantList = response.data;
 
       dispatch({
@@ -39,6 +41,20 @@ export const fetchMenuItems = (restaurantName) => {
       });
     } catch (error) {
       dispatch({ type: FETCH_MENU_FAILURE, payload: error.message });
+    }
+  };
+};
+
+export const fetchOrderDetails = (orderId) => {
+  return async (dispatch) => {
+    try {
+      // Replace 'http://localhost:8002/orders' with the correct API endpoint for fetching order details
+      const response = await axios.get(`http://localhost:8002/orders/${orderId}`);
+      const orderDetails = response.data;
+
+      dispatch({ type: FETCH_ORDER_SUCCESS, payload: orderDetails });
+    } catch (error) {
+      dispatch({ type: FETCH_ORDER_FAILURE, payload: error.message });
     }
   };
 };
